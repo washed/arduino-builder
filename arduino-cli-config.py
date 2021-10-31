@@ -12,7 +12,7 @@ LOGGER.setLevel("DEBUG")
 
 
 CLI_CMD = "arduino-cli"
-CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME")
+CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME", "arduino-builder-config.yml")
 CONFIG_EXISTS_MSG = "Config file already exists, use --overwrite to discard the existing one."
 
 

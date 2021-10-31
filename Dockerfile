@@ -4,8 +4,13 @@ RUN apt-get clean && apt-get update && apt-get upgrade -y
 RUN apt-get install curl clang-format sudo -y
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/0.19.3/install.sh | BINDIR=/usr/bin sh
 
-WORKDIR /root
+WORKDIR /usr/src/app
 
-COPY arduino-cli-config.py /root/arduino-cli-config.py
+RUN python -m venv /venv && /venv/bin/python -m pip install --upgrade pip && /venv/bin/pip install -U setuptools
+
+COPY requirements.txt ./
+RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
+
+COPY arduino-cli-config.py ./
 
 ENTRYPOINT [ "python", "arduino-cli-config.py" ]
