@@ -11,8 +11,10 @@ LOGGER = logging.getLogger()
 LOGGER.setLevel("DEBUG")
 
 
-CLI_CMD = "arduino-cli"
+CLI_CMD = "/usr/src/app/bin/arduino-cli"
 CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME", "arduino-builder-config.yml")
+BUILD_DIR = "/usr/src/app/build"
+BUILD_CACHE_DIR = "/usr/src/app/build_cache"
 CONFIG_EXISTS_MSG = "Config file already exists, use --overwrite to discard the existing one."
 
 
@@ -63,7 +65,7 @@ def compile(compile: ArduinoBuilderCompileConfig):
     compile_cmd = [CLI_CMD, "compile", "--warnings", compile.warnings]
     if compile.verbose:
         compile_cmd.append("-v")
-    compile_cmd.extend([f"-b {compile.board_type}", compile.project_dir])
+    compile_cmd.extend(["--build-path", BUILD_DIR, "--build-cache-path", BUILD_CACHE_DIR, "-b", compile.board_type, compile.project_dir])
     call(compile_cmd)
 
 
