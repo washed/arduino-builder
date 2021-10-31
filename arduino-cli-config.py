@@ -16,10 +16,18 @@ CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME", "arduino-builder-config.yml")
 CONFIG_EXISTS_MSG = "Config file already exists, use --overwrite to discard the existing one."
 
 
+class ArduinoBuilderCompileConfig(BaseModel):
+  verbose: bool = True
+  warnings: str = "more"
+  board_type: str
+  project_dir: str
+
+
 class ArduinoBuilderConfig(BaseModel):
     additional_board_urls: Optional[List[HttpUrl]]
     boards: Optional[List[str]]
     libraries: Optional[List[str]]
+    compile: Optional[ArduinoBuilderCompileConfig]
 
 
 def call(commands: List[str], ignored_errors: List[str] = []):
@@ -46,6 +54,17 @@ def update():
 
 def upgrade():
     call([CLI_CMD, "upgrade"])
+
+
+def compile(compile: ArduinoBuilderCompileConfig):
+    if compile is None:
+        return
+
+    compile_cmd = [CLI_CMD, "compile", f"--warnings {compile.warnings}"]
+    if compile.verbose:
+        compile_cmd.append("-v")
+    compile_cmd.extend([f"-b {compile.board_type}", compile.project_dir])
+    call(compile_cmd)
 
 
 def install_libs(libs: List[str]):
@@ -89,6 +108,7 @@ def main():
     upgrade()
     install_libs(config.libraries)
     install_boards(config.boards)
+    compile(config.compile)
 
 
 if __name__ == "__main__":
