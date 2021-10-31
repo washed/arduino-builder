@@ -88,8 +88,9 @@ def add_urls(urls: List[HttpUrl]):
 
 
 @click.command()
-@click.option("--compile/--no-compile", default=False)
-def main(compile):
+@click.option("--compile/--no-compile", default=True)
+@click.option("--init/--no-init", default=True)
+def main(compile, init):
     with open(CONFIG_FILE_NAME, "r") as file:
         try:
             config_yaml = yaml.safe_load(file)
@@ -99,13 +100,15 @@ def main(compile):
             LOGGER.exception(exc)
             return
 
-    config_init()
-    add_urls(config.additional_board_urls)
-    update_index()
-    update()
-    upgrade()
-    install_libs(config.libraries)
-    install_boards(config.boards)
+    if init:
+        config_init()
+        add_urls(config.additional_board_urls)
+        update_index()
+        update()
+        upgrade()
+        install_libs(config.libraries)
+        install_boards(config.boards)
+
     if config.compile and compile:
         compile(config.compile)
 
