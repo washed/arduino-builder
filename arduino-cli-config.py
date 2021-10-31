@@ -60,7 +60,7 @@ def compile(compile: ArduinoBuilderCompileConfig):
     if compile is None:
         return
 
-    compile_cmd = [CLI_CMD, "compile", f"--warnings {compile.warnings}"]
+    compile_cmd = [CLI_CMD, "compile", "--warnings", compile.warnings]
     if compile.verbose:
         compile_cmd.append("-v")
     compile_cmd.extend([f"-b {compile.board_type}", compile.project_dir])
