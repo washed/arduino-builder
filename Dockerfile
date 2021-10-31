@@ -13,4 +13,4 @@ RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY arduino-cli-config.py ./
 
-ENTRYPOINT [ "python", "arduino-cli-config.py" ]
+ENTRYPOINT [ "/venv/bin/python", "arduino-cli-config.py" ]
