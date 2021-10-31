@@ -5,6 +5,9 @@ RUN apt-get clean && apt-get update
 RUN apt-get install curl clang-format sudo -y
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/0.19.3/install.sh | BINDIR=/usr/bin sh
 
+WORKDIR /root
+ENTRYPOINT [ "python", "arduino-cli-config.py" ]
+
 # RUN arduino-cli config init
 # RUN arduino-cli config add board_manager.additional_urls https://raw.githubusercontent.com/washed/CO2-Ampel/master/package_co2ampel_index.json
 # RUN arduino-cli core update-index
