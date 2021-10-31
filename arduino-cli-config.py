@@ -15,14 +15,13 @@ CLI_CMD = "/usr/src/app/bin/arduino-cli"
 CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME", "arduino-builder-config.yml")
 BUILD_DIR = "/usr/src/app/build"
 BUILD_CACHE_DIR = "/usr/src/app/build_cache"
-CONFIG_EXISTS_MSG = "Config file already exists, use --overwrite to discard the existing one."
 
 
 class ArduinoBuilderCompileConfig(BaseModel):
-  verbose: bool = True
-  warnings: str = "more"
-  board_type: str
-  project_dir: str
+    verbose: bool = True
+    warnings: str = "more"
+    board_type: str
+    project_dir: str
 
 
 class ArduinoBuilderConfig(BaseModel):
@@ -32,18 +31,13 @@ class ArduinoBuilderConfig(BaseModel):
     compile: Optional[ArduinoBuilderCompileConfig]
 
 
-def call(commands: List[str], ignored_errors: List[str] = []):
-    try:
-        check_output(commands, stderr=STDOUT, encoding="utf-8")
-    except CalledProcessError as exc:
-        LOGGER.debug("EXC: %s", exc.output)
-        if any(ignored_error in exc.output for ignored_error in ignored_errors):
-            return
-        raise
+def call(commands: List[str]):
+    LOGGER.info("Calling '%s'", " ".join(commands))
+    return check_output(commands, encoding="utf-8")
 
 
 def config_init():
-    call([CLI_CMD, "config", "init", "--overwrite"], [CONFIG_EXISTS_MSG])
+    call([CLI_CMD, "config", "init", "--overwrite"])
 
 
 def update_index():
@@ -62,8 +56,10 @@ def compile(compile: ArduinoBuilderCompileConfig):
     compile_cmd = [CLI_CMD, "compile", "--warnings", compile.warnings]
     if compile.verbose:
         compile_cmd.append("-v")
-    compile_cmd.extend(["--build-path", BUILD_DIR, "--build-cache-path", BUILD_CACHE_DIR, "-b", compile.board_type, compile.project_dir])
-    call(compile_cmd)
+    compile_cmd.extend(["--build-path", BUILD_DIR, "--build-cache-path",
+                       BUILD_CACHE_DIR, "-b", compile.board_type, compile.project_dir])
+    output = call(compile_cmd)
+    LOGGER.info(output)
 
 
 def install_libs(libs: List[str]):
@@ -107,7 +103,8 @@ def main():
     upgrade()
     install_libs(config.libraries)
     install_boards(config.boards)
-    compile(config.compile)
+    if config.compile:
+        compile(config.compile)
 
 
 if __name__ == "__main__":
