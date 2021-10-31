@@ -53,7 +53,7 @@ def upgrade():
     call([CLI_CMD, "upgrade"])
 
 
-def compile(compile: ArduinoBuilderCompileConfig):
+def build(compile: ArduinoBuilderCompileConfig):
     compile_cmd = [CLI_CMD, "compile", "--warnings", compile.warnings]
     if compile.verbose:
         compile_cmd.append("-v")
@@ -110,7 +110,7 @@ def main(compile, init):
         install_boards(config.boards)
 
     if config.compile and compile:
-        compile(config.compile)
+        build(config.compile)
 
 
 if __name__ == "__main__":
