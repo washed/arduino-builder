@@ -1,8 +1,9 @@
 import logging
 from os import getenv
-from subprocess import STDOUT, CalledProcessError, check_output
+from subprocess import check_output
 from typing import List, Optional
 
+import click
 import yaml
 from pydantic import BaseModel, HttpUrl
 
@@ -86,7 +87,9 @@ def add_urls(urls: List[HttpUrl]):
         call([CLI_CMD, "config", "add", "board_manager.additional_urls", url])
 
 
-def main():
+@click.command()
+@click.option("--compile/--no-compile", default=False)
+def main(compile):
     with open(CONFIG_FILE_NAME, "r") as file:
         try:
             config_yaml = yaml.safe_load(file)
@@ -103,7 +106,7 @@ def main():
     upgrade()
     install_libs(config.libraries)
     install_boards(config.boards)
-    if config.compile:
+    if config.compile and compile:
         compile(config.compile)
 
 
