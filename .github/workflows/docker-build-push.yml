@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   release:
-    published:
-      branches: [main]
+    types: [published]
+    branches: [main]
 
 jobs:
   build:
