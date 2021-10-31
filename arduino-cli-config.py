@@ -1,9 +1,10 @@
-from subprocess import check_output, CalledProcessError, STDOUT
-from typing import List, Optional
-from pydantic import BaseModel, HttpUrl
-import yaml
 import logging
+from os import getenv
+from subprocess import STDOUT, CalledProcessError, check_output
+from typing import List, Optional
 
+import yaml
+from pydantic import BaseModel, HttpUrl
 
 logging.basicConfig()
 LOGGER = logging.getLogger()
@@ -11,7 +12,7 @@ LOGGER.setLevel("DEBUG")
 
 
 CLI_CMD = "arduino-cli"
-
+CONFIG_FILE_NAME = getenv("CONFIG_FILE_NAME")
 CONFIG_EXISTS_MSG = "Config file already exists, use --overwrite to discard the existing one."
 
 
@@ -72,7 +73,7 @@ def add_urls(urls: List[HttpUrl]):
 
 
 def main():
-    with open("example-config.yml", "r") as file:
+    with open(CONFIG_FILE_NAME, "r") as file:
         try:
             config_yaml = yaml.safe_load(file)
             config = ArduinoBuilderConfig(**config_yaml)
