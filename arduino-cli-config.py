@@ -59,9 +59,6 @@ def upgrade():
 
 
 def compile(compile: ArduinoBuilderCompileConfig):
-    if compile is None:
-        return
-
     compile_cmd = [CLI_CMD, "compile", "--warnings", compile.warnings]
     if compile.verbose:
         compile_cmd.append("-v")
